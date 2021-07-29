@@ -1,0 +1,78 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+    <!-- https://aws.amazon.com/blogs/security/how-to-add-authentication-single-page-web-application-with-amazon-cognito-oauth2-implementation/ -->
+    <meta charset="utf-8">
+
+    <title>MyApp</title>
+    <meta name="description" content="My Application">
+    <meta name="author" content="Your Name">
+</head>
+
+<body>
+    <h2>Cognito User</h2>
+
+    <p style="white-space:pre-line;" id="token_status"></p>
+
+    <p>Id Token</p>
+    <p style="white-space:pre-line;" id="id_token"></p>
+
+    <p>Access Token</p>
+    <p style="white-space:pre-line;" id="access_token"></p>
+
+    <p>User Profile</p>
+    <p style="white-space:pre-line;" id="userInfo"></p>
+
+
+
+    <button id="test-api">Test Protected API</button>
+
+    <script>
+        // Put the protected API URL you want to test here
+        var apiURL = "";
+
+        function postToAPI() {
+            fetch(apiURL, {
+                credentials: 'include',
+                mode: 'cors',
+                method: 'POST',
+                body: JSON.stringify({
+                    title: "To CORS or Not to CORS",
+                    text: "Ripping my cross-domain heart out"
+                }),
+                headers: {
+                    'Authorization': sessionStorage.getItem('access_token'),
+                    'Content-Type': 'application/json'
+                },
+            }).then(function(response) {
+
+                // The API call was successful!
+                if (response.ok) {
+                    console.log(response.json());
+                    return response.json();
+                }
+
+                // There was an error
+                return Promise.reject(response);
+
+            }).then(function(data) {
+                // This is the JSON from our response
+                console.log(data);
+            }).catch(function(err) {
+                // There was an error
+                console.warn('Something went wrong.', err);
+            });
+        }
+
+        var testAPIButton = document.querySelector('#test-api');
+        testAPIButton.addEventListener('click', postToAPI, false);
+        console.log("postToAPI() loaded")
+    </script>
+    <script language="JavaScript" type="text/javascript" src="https://kjur.github.io/jsrsasign/jsrsasign-latest-all-min.js"></script>
+    <script src="verifier.js"></script>
+    <script src="userprofile.js"></script>
+</body>
+
+</html>
